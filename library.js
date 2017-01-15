@@ -80,15 +80,13 @@
             }
         }, function(err, data) {
             var categories = JSON.parse(Slack.config['slack:categories']);
-            
-            console.log(data.user);
 
             if (!categories || categories.indexOf(String(post.cid)) >= 0) {
                 // trim message based on config option
                 var maxContentLength = Slack.config['post:maxlength'] || false;
                 // if (maxContentLength && content.length > maxContentLength) { content = content.substring(0, maxContentLength) + '...'; }
                 // message format: <username> posted [<categoryname> : <topicname>]\n <message>
-                var message = '@eeveryone\nA new announcement has been posted by ' + data.user.username + '\n' + 'Topic name: ' + data.topic.title + '\n' + 'View the topic: ' + '<' + nconf.get('url') + '/topic/' + data.topic.slug + '|[' + 'Click for more info' + ']>'; // + content;
+                var message = '@everyone\nA new announcement has been posted by ' + data.user.username + '\n' + 'Topic name: ' + data.topic.title + '\n' + 'View the topic: ' + '<' + nconf.get('url') + '/topic/' + data.topic.slug + '|[' + 'Click for more info' + ']>'; // + content;
                 
                 slack.webhook({
                     'text'     : message,
