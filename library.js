@@ -81,18 +81,20 @@
         }, function(err, data) {
             var categories = JSON.parse(Slack.config['slack:categories']);
             
+            console.log(data.user);
+
             if (!categories || categories.indexOf(String(post.cid)) >= 0) {
                 // trim message based on config option
                 var maxContentLength = Slack.config['post:maxlength'] || false;
-                if (maxContentLength && content.length > maxContentLength) { content = content.substring(0, maxContentLength) + '...'; }
+                // if (maxContentLength && content.length > maxContentLength) { content = content.substring(0, maxContentLength) + '...'; }
                 // message format: <username> posted [<categoryname> : <topicname>]\n <message>
-                var message = '<' + nconf.get('url') + '/topic/' + data.topic.slug + '|[' + data.category.name + ': ' + data.topic.title + ']>\n' + content;
+                var message = '@eeveryone\nA new announcement has been posted by ' + data.user.username + '\n' + 'Topic name: ' + data.topic.title + '\n' + 'View the topic: ' + '<' + nconf.get('url') + '/topic/' + data.topic.slug + '|[' + 'Click for more info' + ']>'; // + content;
                 
                 slack.webhook({
                     'text'     : message,
                     'channel'  : (Slack.config['channel'] || '#general'),
                     'username' : data.user.username,
-                    'icon_url' : data.user.picture.match(/^\/\//) ? 'http:' + data.user.picture : data.user.picture
+                    'icon_emoji' : data.user.picture //.match(/^\/\//) ? 'http:' + data.user.picture : data.user.picture
                 }, function(err, response) {
                     if (err) {
                         console.log(err);
